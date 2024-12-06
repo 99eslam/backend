@@ -39,6 +39,7 @@ class CategoryController extends Controller
         $category = new Category();
         $category->catogoryname = $request->get('catogoryname');
         $category->save();
+        return response()->json(['message' => 'catogary added successfully'],201);
     }
 
     /**
@@ -78,6 +79,8 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->catogoryname = $request->get('catogoryname');
         $category->save();
+        return response()->json(['message' => 'catogary updated successfully' , "category" => $category],201);
+
     }
 
     /**
@@ -94,8 +97,14 @@ class CategoryController extends Controller
     }
 
     public function getall() //retrieves and returns all categories from the database.
+
     {
+        // Get all categories from the database
         $categories = Category::all();
-        return $categories;
+
+        // Return categories as a JSON response
+        return response()->json($categories, 200);  // Ensure it's a JSON response
     }
+
+
 }

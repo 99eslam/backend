@@ -48,11 +48,11 @@ class VendorController extends Controller
         $user->password = $request->get('password');
         $user->address = $request->get('address');
         $user->username = $request->get('username');
-        $user->role = 3;
+        $user->roleid = 2;
         $user->acceptance_flag = 0;
         $user->suspended_flag = 0;
-
         $user->save();
+        return response()->json(['message' => 'user create succesfully' ,'user'=> $user],201);
     }
 
     /**
@@ -112,7 +112,8 @@ class VendorController extends Controller
         $user->delete();
     }
 
-    public function Addproduct(Request $request){
+    public function Addproduct(Request $request)
+    {
 
         $this->product_controller->store($request);
 

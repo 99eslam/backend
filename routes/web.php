@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Illuminate\Support\Facades\Auth::routes();
+Route::get('/logout', [LoginController::class,'logout']);//tested
+
+Route::post('/login', [LoginController::class, 'login']); //will test

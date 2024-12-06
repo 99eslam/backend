@@ -16,11 +16,9 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('clientid');
-            $table->unsignedBigInteger('vendorid');
             $table->bigInteger('total');
             $table->timestamps();
             $table->foreign('clientid')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('vendorid')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

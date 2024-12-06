@@ -40,6 +40,7 @@ class SubCategoryController extends Controller
         $subcategory->subcategoryname=$request->get('subcategoryname');
         $subcategory->categoryid=$request->get('categoryid');
         $subcategory->save();
+         return response()->json(['message' => 'Subcategory added successfully'], 201);
     }
 
     /**
@@ -80,6 +81,7 @@ class SubCategoryController extends Controller
         $subcategory->subcategoryname=$request->get('subcategoryname');
         $subcategory->categoryid=$request->get('categoryid');
         $subcategory->save();
+        return response()->json(['message' => 'subcategory updated successfully'],201);
     }
 
     /**
@@ -91,8 +93,18 @@ class SubCategoryController extends Controller
     public function destroy($id)
     {
         //
-        $subcategory=SubCategory::find($id);
+        $subcategory = SubCategory::find($id);
+
+        // If no subcategory is found, return a 404 response
+        if (!$subcategory) {
+            return response()->json(['message' => 'Subcategory not found'], 404);
+        }
+
+        // Delete the subcategory
         $subcategory->delete();
+
+        // Return a success message after deletion
+        return response()->json(['message' => 'Subcategory deleted successfully'], 200);
     }
 
     public function getsubcategoryproducts($id)

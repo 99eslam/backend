@@ -15,6 +15,7 @@ class ProductController extends Controller
     public function index()
     {
         //
+        return product::ggg();
     }
 
     /**
@@ -35,14 +36,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $product = new Product();
-        $product->subcategoryid  = $request->get('subcategoryid');
         $product->name  = $request->get('name');
+        $product->subcategoryid  = $request->get('subcategoryid');
+        $product->userid  = $request->get('userid');
         $product->description  = $request->get('description');
         $product->quantity  = $request->get('quantity');
         $product->price  = $request->get('price');
         $product->save();
+        return response()->json(['message' => 'product added successfully'],201);
+
     }
 
     /**
@@ -81,6 +84,7 @@ class ProductController extends Controller
         //
         $product = product::find($id);
         $product->subcategoryid  = $request->get('subcategoryid');
+        $product->userid  = $request->get('userid');
         $product->name  = $request->get('name');
         $product->description  = $request->get('description');
         $product->quantity  = $request->get('quantity');
@@ -109,12 +113,32 @@ class ProductController extends Controller
     {
         //
         $product = product::find($id);
+        $product->quantity -= $request->get('quantity');
+        $product->save();
+    }
+    public function updatedeletedquantity(Request $request, $id)
+    {
+        //
+        $product = product::find($id);
+        $product->quantity += $request->get('quantity');
+        $product->save();
+    }
+    public function setquantity(Request $request, $id)
+    {
+        //
+        $product = product::find($id);
         $product->quantity  = $request->get('quantity');
         $product->save();
     }
 
+
     public function getbysubcategory($subcategoryid)
     {
         return product::where('subcategoryid', $subcategoryid)->get();
+    }
+
+    public function getproduct($id)
+    {
+        return product::find($id);
     }
 }

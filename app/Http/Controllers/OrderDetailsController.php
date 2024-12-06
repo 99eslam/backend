@@ -45,15 +45,15 @@ class OrderDetailsController extends Controller
         $detail->totalprice =$request->get('totalprice');
         $detail->save();
 
-        $order = Order::find($request->get('orderid'));
+        // $order = Order::find($request->get('orderid'));
 
-        $main_order_details = OrderDetails::where('orderid',$request->get('orderid'))->get();
-        $total=0;
-        foreach ($main_order_details as $order_detail) {
-            $total=$total+$order_detail->totalprice;
-        }
-        $order->totalprice=$total;
-        $order->save();
+        // $main_order_details = OrderDetails::where( 'orderid',$request->get('orderid'))->get();
+        // $total=0;
+        // foreach ($main_order_details as $order_detail) {
+        //     $total=$total+$order_detail->totalprice;
+        // }
+        // $order->total=$total;
+        // $order->save();
 
     }
 
@@ -105,7 +105,7 @@ class OrderDetailsController extends Controller
         foreach ($main_order_details as $order_detail) {
             $total=$total+$order_detail->totalprice;
         }
-        $order->totalprice=$total;
+        $order->total=$total;
         $order->save();
     }
 
@@ -118,19 +118,12 @@ class OrderDetailsController extends Controller
     public function destroy($id)
     {
         //
-        $detail=OrderDetails::find($id);
-        $orderid=$detail->orderid;
-        $detail->delete();
 
-        $order = Order::find($orderid);
+    }
 
-        $main_order_details = OrderDetails::where('orderid',$orderid)->get();
-        $total=0;
-        foreach ($main_order_details as $order_detail) {
-            $total=$total+$order_detail->totalprice;
-        }
-        $order->totalprice=$total;
-        $order->save();
+    public function getorderdetails($orderid)
+    {
+        return OrderDetails::where('orderid',$orderid)->get();
     }
 
 

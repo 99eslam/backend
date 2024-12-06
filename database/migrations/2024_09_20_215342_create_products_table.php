@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('subcategoryid');
             $table->foreign('subcategoryid')->references('id')->on('subcategories')->onDelete('cascade');
+            $table->unsignedBigInteger('userid');
+            $table->foreign('userid')->references('id')->on('users')->onDelete('cascade');
             $table->string('description')->unique();
             $table->integer('quantity');
             $table->decimal('price');

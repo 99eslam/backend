@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrderDetails;
 use App\Models\User;
 use Illuminate\Http\Request;
-
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderDetailsController;
-
 
 class ClientController extends Controller
 {
@@ -18,11 +15,15 @@ class ClientController extends Controller
      */
     protected $order_controller;
     protected $order_detail_controller;
+
+    protected $product_controller;
     public function __construct()
     {
         $this->order_controller = new OrderController();
         $this->order_detail_controller = new OrderDetailsController();
+        $this->product_controller = new ProductController();
     }
+
     public function index()
     {
         //
@@ -53,7 +54,7 @@ class ClientController extends Controller
         $user->password = $request->get('password');
         $user->address = $request->get('address');
         $user->username = $request->get('username');
-        $user->role = 2;
+        $user->roleid = 3;
         $user->acceptance_flag = 0;
         $user->suspended_flag = 0;
 
@@ -119,64 +120,49 @@ class ClientController extends Controller
 
     public function makeOrder (Request $request)
     {
+
+        foreach ($request->details as $detail) {
+            $product = $this->product_controller->getproduct($detail['productid']);
+            if($product->quantity <$detail['quantity'])
+            {
+                return response()->json([
+                    'msg' => "Quantity of product".$product->name."is low",
+                ], 302);
+            }
+
+        }
+
         $orderRequest = new Request();
         $orderRequest->merge([
             'clientid' => $request->get('clientid'),
-            'vendorid' => $request->get('vendorid'),
             'total' => $request->get('total')]
         );
 
         $last_id = $this->order_controller->store($orderRequest);
         foreach ($request->details as $detail) {
             $order_detail_request = new Request();
+            $update_quantity_request = new Request();
             $order_detail_request->merge([
                 'orderid' => $last_id,
                 'productid'=>$detail['productid'],
                 'quantity'=>$detail['quantity'],
                 'totalprice'=>$detail['totalprice'],
             ]);
+            $update_quantity_request->merge([
+                'quantity'=>$detail['quantity'],
+            ]);
+            $this->product_controller->updatequantity($order_detail_request,$detail['productid']);
             $this->order_detail_controller->store($order_detail_request);
         }
-        return 0;
+        return response()->json([
+            'msg' => "Order has been submitted successfully",
+        ], 200);
     }
 
     public function deleteOrder($id)
     {
-        $this->order_controller->destroy($id);
-    }
-//-------------------------------------------------------------------------
-    public function storeorder(Request $request)
-    {
-     return $this->order_controller->store($request);
+        // foreach()
+        return$this->order_controller->destroy($id);
     }
 
-    public function showorder($id)
-    {
-        $this->order_controller->show($id);
-    }
-
-    public function updateorder(Request $request , $id)
-    {
-        return $this->order_controller->update($request ,$id);
-    }
-//-------------------------------------------------------------------------------------
-    public function storeorderdetail(Request $request)
-    {
-        return $this->order_detail_controller->store($request);
-    }
-
-    public function showorderdetail(Request $request , $id)
-    {
-        return $this->order_detail_controller->show($id);
-    }
-
-    public function updateorderdetail(Request $request , $id)
-    {
-        return $this->order_detail_controller->update($request ,$id);
-    }
-
-    public function deleteorderdetail($id)
-    {
-        $this->order_detail_controller->destroy($id);
-    }
 }

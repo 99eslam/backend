@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Couchbase\Role;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -92,5 +92,15 @@ class RoleController extends Controller
         //
         $role = Role::find($id);
         $role->delete();
+    }
+
+    public function getall() //retrieves and returns all categories from the database.
+
+    {
+        // Get all categories from the database
+        $Role = Role::wherenot('description', 'LIKE', 'ADMIN')->get();
+
+        // Return categories as a JSON response
+        return response()->json($Role, 200);  // Ensure it's a JSON response
     }
 }

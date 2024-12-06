@@ -16,6 +16,13 @@
 
                     {{ __('You are logged in!') }}
                 </div>
+                <!-- If the user is logged in, show the logout button -->
+@if (Auth::check())
+    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+        @csrf
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+@endif
             </div>
         </div>
     </div>

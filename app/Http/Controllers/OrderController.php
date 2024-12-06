@@ -12,6 +12,13 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    protected $order_detail_controller;
+    protected $product_controller;
+    public function __construct()
+    {
+        $this->order_detail_controller = new OrderDetailsController();
+        $this->product_controller = new ProductController();
+    }
     public function index()
     {
         //
@@ -38,7 +45,6 @@ class OrderController extends Controller
         //
         $order=new Order();
         $order->clientid= $request->get('clientid');
-        $order->vendorid= $request->get('vendorid');
         $order->total= $request->get('total');
         $order->save();
         return $order->id;
@@ -80,7 +86,6 @@ class OrderController extends Controller
         //
         $order=Order::find($id);
         $order->clientid= $request->get('clientid');
-        $order->vendorid= $request->get('vendorid');
         $order->total= $request->get('total');
         $order->save();
     }
@@ -94,6 +99,16 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+        $order_details=$this->order_detail_controller->getorderdetails($id);
+        foreach($order_details as $detail)
+        {
+            $update_quantity_request = new Request();
+
+            $update_quantity_request->merge([
+                'quantity'=>$detail['quantity'],
+            ]);
+            $product = $this->product_controller->updatedeletedquantity($update_quantity_request,$detail['productid']);
+        }
         $order = Order::find($id);
         $order->delete();
     }
